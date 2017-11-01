@@ -7,7 +7,7 @@ package javaApplication1;
  */
 public class Random_Edge_Graph {
 
-    private static final class Edge implements Comparable<Edge> {
+    private static abstract class Edge implements Comparable<Edge> {
         private int v;
         private int w;
 
@@ -21,7 +21,7 @@ public class Random_Edge_Graph {
                 this.w = v;
             }
         }
-
+/*
         @Override
         public int compareTo(Edge that) {
             if (this.v < that.v) return -1;
@@ -30,6 +30,7 @@ public class Random_Edge_Graph {
             if (this.w > that.w) return +1;
             return 0;
         }
+        */
     }
 
     Random_Edge_Graph() { }

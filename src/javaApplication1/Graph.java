@@ -1,9 +1,9 @@
 package javaApplication1;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
-
+ 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -14,14 +14,19 @@ import java.util.LinkedList;
  * @author jiali
  */
 public class Graph {
-    private static final String NEWLINE = System.getProperty("line.separator");
 
     private final int V;
+    //private  Map<Integer, List<Integer>> Adjacency_List;
     int E;
-    LinkedList<Integer>[] adj;
-    int [][] matrix;
-    ArrayList<Integer> iList;
-    ArrayList<Integer> jList;
+    //PriorityQueue<node> nodelist;
+    //private Bag<Node>[] adj;
+    //int [][] matrix;
+    PriorityQueue<Node> priorityNodeQ;
+    ArrayList<Node> nodeList;
+    //ArrayList<Integer> iList;
+    //ArrayList<Integer> jList;
+    Comparator<Node> pqs;
+    
    
     /**
      * Initializes an empty graph with {@code V} vertices and 0 edges.
@@ -34,24 +39,85 @@ public class Graph {
         if (V < 0) throw new IllegalArgumentException("Number of vertices must be nonnegative");
         this.V = V;
         this.E = 0;
-        iList = new ArrayList<>();
-        jList = new ArrayList<>();
-        matrix = new int[V][V];
-        for (int i=0; i< V;i++)
-          for(int j= i+1; j<V;j++)
-              matrix[i][j] = 0;
-        //System.out.println(V);
+        //iList = new ArrayList<>();
+        //jList = new ArrayList<>();
+        pqs = new degreeComparator();
+        nodeList = new ArrayList<>();
+        priorityNodeQ = new PriorityQueue<>(V,pqs);
+        //priorityNodeQ = new PriorityQueue<>(V, pqs);
+        //initilise adjacent list
+        //adj = (Bag<Node>[]) new Bag[V];
+        //for (int v = 0; v < V; v++) {
+        //    adj[v] = new Bag<Node>();
+        //}
+        //initialise adjacent matrix
+        //add all vertices to the priorityQ
+        for (int v = 0; v < V; v++) {
+            Node n = new Node(v);
+            nodeList.add(n);
+           // priorityNodeQ.add(n);
+            //System.out.println("growing npq: ");
+            //printNPQ(priorityNodeQ);
+            //System.out.println("NPQ size: " + priorityNodeQ.size());
+        }
+            //throw new UnsupportedOperationException("Not supported yet.");//To change body of generated methods, choose Tools | Templates.
+       }  
+
+    private static class degreeComparator implements Comparator<Node>{
+        @Override
+        public int compare(Node a, Node b) {
+            if (a.degree < b.degree){
+              return -1;
+            }
+            if (a.degree < b.degree){
+              return 1;
+            }
+            return 0;
+   }  
+       
+   }  
+   
+    
+
+//Node subclass    
+class Node{
+int nodeVal;
+int degree;
+ArrayList<Node> neighbors;
+
+  public Node(int V){
+  nodeVal = V;
+  neighbors = new ArrayList<>();
+  //degree and neghbors
+  }
+
+        public Node() {
+            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+  
+  //get the number of degree 
+  public int getDegree() {
+        return degree;
     }
-    
-
-
-    /**
-     * Initializes a new graph that is a deep copy of {@code G}.
-     *
-     * @param  G the graph to copy
-     */
-    
-
+  //delete all neighbors and its connections to other nodes
+  public void breakConnections(Node neighbor){
+      ArrayList<Node> nList = neighbor.neighbors;
+      for (int i=0; i <nList.size();i++){
+        Node n = nList.get(i);
+        n.degree--;
+        n.neighbors.remove(neighbor);
+      }
+  }
+  /*
+  @Override
+  public boolean equals(Object o){
+    if (o instanceof Node){
+    Node c = (Node)o;
+    return nodeVal== c.nodeVal;
+    }
+  return false;
+  } */
+    }     
     /**
      * Returns the number of vertices in this graph.
      *
@@ -60,7 +126,7 @@ public class Graph {
     public int V() {
         return V;
     }
-
+    
     /**
      * Returns the number of edges in this graph.
      *
@@ -87,6 +153,17 @@ public class Graph {
         validateVertex(v);
         validateVertex(w);
         E++;
+        Node vNode = nodeList.get(v);
+        //System.out.println("v index: "+ v + " nodeVal: " + vNode.nodeVal);
+        Node wNode = nodeList.get(w);
+        //System.out.println("w index: "+ w + " nodeVal: " + wNode.nodeVal);
+        vNode.neighbors.add(wNode);
+        wNode.neighbors.add(vNode);
+        vNode.degree++;
+        wNode.degree++;
+        // print edges pairs
+        //System.out.println("( "+ v + " , "+ w + " )");
+        /*
         if (matrix[w][v]==0 && matrix[v][w]==0){
           matrix[v][w] = 1;
           matrix[w][v] = 1;
@@ -98,7 +175,9 @@ public class Graph {
           iList.add(v);
           jList.add(w);
         }
+        */
     }
+}
 
     /**
      * Returns the degree of vertex {@code v}.
@@ -107,18 +186,23 @@ public class Graph {
      * @return the degree of vertex {@code v}
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    //public int degree(int v) {
-    //    validateVertex(v);
-    //    return adj[v].size();
-    //}
-
-
-    /**
-     * Returns a string representation of this graph.
-     *
-     * @return the number of vertices <em>V</em>, followed by the number of edges <em>E</em>,
-     *         followed by the <em>V</em> adjacency lists
-     */
     
+    
+    /**
+     * Returns the vertices adjacent to vertex {@code v}.
+     *
+     * @param  v the vertex
+     * @return the vertices adjacent to vertex {@code v}, as an iterable
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     */
+    /*
+    public Iterable<Integer> adj(int v) {
+        validateVertex(v);
+        return adj[v];
     }
+    */
+    
+    
+    
+  
     
